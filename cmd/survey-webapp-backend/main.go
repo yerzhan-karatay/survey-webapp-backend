@@ -2,17 +2,38 @@ package main
 
 import (
 	"fmt"
-	"html"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yerzhan-karatay/survey-webapp-backend/config"
+	"github.com/yerzhan-karatay/survey-webapp-backend/errors"
+	"github.com/yerzhan-karatay/survey-webapp-backend/services"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Test request %q", html.EscapeString(r.URL.Path))
-	})
+	r := gin.New()
+	r.Use(errors.HandleHTTPError())
 
-	log.Println("Listening on localhost:8080")
+	r = services.MakeHTTPHandler(r)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	errs := make(chan error)
+	cfg := config.Get()
+	httpPort := fmt.Sprintf(":%d", cfg.HTTP.Port)
+
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+		errs <- fmt.Errorf("%s", <-c)
+	}()
+
+	go func() {
+		log.Println("transport:", "HTTP", "port:", httpPort)
+		errs <- http.ListenAndServe(httpPort, r)
+	}()
+
+	log.Fatal(<-errs, "exit")
 }
