@@ -20,6 +20,17 @@ func GetService(userRepo Repository) Service {
 	}
 }
 
+// CreateUser godoc
+// @Summary Add a new user
+// @Description User creation
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param requestBody body CreateUserRequest true "Create user"
+// @Success 201 {object} CreateUserResponse
+// @Failure 400 {string} ErrBadRequest
+// @Failure 500 {string} ErrInsertFailed
+// @Router /users [post]
 func (s *service) CreateUser(ctx *gin.Context, request CreateUserRequest) (string, error) {
 	var token string = "dummy token"
 

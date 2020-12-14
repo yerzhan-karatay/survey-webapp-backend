@@ -1,7 +1,5 @@
 # Survey backend service on GoLang
-### 1. Install [GO - 1.15.6](https://golang.org/doc/install)
-### 2. Install [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md)
-
+### Install [GO - 1.15.6](https://golang.org/doc/install)
 
 ### Run the service locally
 ```
@@ -31,3 +29,6 @@ or
 ```
 go test ./cmd/...
 ```
+
+### API doc accessible via Swagger
+[http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)

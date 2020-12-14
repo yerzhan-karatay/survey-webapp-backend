@@ -1,0 +1,66 @@
+definitions:
+  user.CreateUserRequest:
+    properties:
+      email:
+        example: mail@mail.com
+        type: string
+      full_name:
+        example: Yerzhan Karatayev
+        type: string
+      password:
+        example: "123"
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.CreateUserResponse:
+    properties:
+      token:
+        example: dummy token
+        type: string
+    required:
+    - token
+    type: object
+info:
+  contact:
+    name: API Support
+  description: Survey service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Survey service API
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: User creation
+      parameters:
+      - description: Create user
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.CreateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Add a new user
+      tags:
+      - Users
+swagger: "2.0"

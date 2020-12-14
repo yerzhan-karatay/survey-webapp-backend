@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-// User is mapping to `user` table
+// User represents the model for an user and is mapping to `user` table
 type User struct {
 	ID       int       `json:"id" gorm:"column:id;primary_key;type:int(11);autoIncrement"`
 	Email    string    `json:"email" gorm:"column:email;type:varchar(255);not null;unique"`
