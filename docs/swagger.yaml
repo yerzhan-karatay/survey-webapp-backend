@@ -16,6 +16,19 @@ definitions:
         example: "123"
         type: string
     type: object
+  models.User:
+    properties:
+      created:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+    type: object
   user.CreateUserRequest:
     properties:
       email:
@@ -50,6 +63,57 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      description: User creation
+      parameters:
+      - description: Create user
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Add a new user
+      tags:
+      - Users
+  /api/users/me:
+    get:
+      consumes:
+      - application/json
+      description: User information by token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: get user info
+      tags:
+      - Users
   /login:
     post:
       consumes:
@@ -80,36 +144,6 @@ paths:
       summary: User authorization
       tags:
       - Auth
-  /users:
-    post:
-      consumes:
-      - application/json
-      description: User creation
-      parameters:
-      - description: Create user
-        in: body
-        name: requestBody
-        required: true
-        schema:
-          $ref: '#/definitions/user.CreateUserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/user.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add a new user
-      tags:
-      - Users
 securityDefinitions:
   ApiKeyAuth:
     in: header

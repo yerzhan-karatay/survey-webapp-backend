@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"github.com/yerzhan-karatay/survey-webapp-backend/config"
 	"github.com/yerzhan-karatay/survey-webapp-backend/models"
 )
@@ -13,6 +14,7 @@ import (
 type JWTService interface {
 	GenerateToken(userInfo models.User) string
 	ValidateToken(token string) (*jwt.Token, error)
+	GetUserByToken(c *gin.Context) (models.User, error)
 }
 type authCustomClaims struct {
 	Email    string `json:"email"`
@@ -30,7 +32,7 @@ type jwtServices struct {
 func JWTAuthService() JWTService {
 	return &jwtServices{
 		secretKey: getSecretKey(),
-		issure:    "Bikash",
+		issure:    "Yerzhan",
 	}
 }
 
@@ -73,4 +75,25 @@ func (s *jwtServices) ValidateToken(encodedToken string) (*jwt.Token, error) {
 		return []byte(s.secretKey), nil
 	})
 
+}
+
+func (s *jwtServices) GetUserByToken(c *gin.Context) (models.User, error) {
+	claims := &authCustomClaims{}
+	user := models.User{}
+
+	const BearerSchema = "Bearer "
+	authHeader := c.GetHeader("Authorization")
+	tokenString := authHeader[len(BearerSchema):]
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(s.secretKey), nil
+	})
+
+	if token != nil {
+		user.ID = claims.ID
+		user.Email = claims.Email
+		user.FullName = claims.FullName
+		return user, nil
+	}
+	return user, err
 }

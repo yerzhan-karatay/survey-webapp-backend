@@ -5,11 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/yerzhan-karatay/survey-webapp-backend/errors"
+	"github.com/yerzhan-karatay/survey-webapp-backend/services/security"
 )
 
 // MakeHTTPHandler mounts user services to gin handler
 func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
-	r.POST("/users", func(ctx *gin.Context) {
+	groupRoutes := r.Group("/api/users")
+	groupRoutes.POST("", func(ctx *gin.Context) {
 		var request CreateUserRequest
 		if err := ctx.ShouldBindJSON(&request); err != nil {
 			ctx.Error(ErrBadRequest)
@@ -23,6 +25,19 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 			ctx.JSON(http.StatusCreated, TokenResponse{
 				Token: token,
 			})
+		}
+
+		return
+	})
+
+	groupRoutes.Use(errors.AuthorizeJWT())
+	groupRoutes.GET("/me", func(ctx *gin.Context) {
+		userByToken, err := security.JWTAuthService().GetUserByToken(ctx)
+		user, err := s.GetUser(ctx, userByToken.ID)
+		if err != nil {
+			ctx.Error(err)
+		} else {
+			ctx.JSON(http.StatusOK, user)
 		}
 
 		return
@@ -45,7 +60,9 @@ type CreateUserRequest struct {
 
 var (
 	// ErrBadRequest means params are not correct
-	ErrBadRequest = errors.NewHTTPError(400, "Bad request")
+	ErrBadRequest = errors.NewHTTPError(http.StatusBadRequest, "Bad request")
 	// ErrInsertFailed means record is not persusted into table
-	ErrInsertFailed = errors.NewHTTPError(500, "Insert record failed")
+	ErrInsertFailed = errors.NewHTTPError(http.StatusInternalServerError, "Insert record failed")
+	// ErrNotFound means user was not found in the db by userId or email
+	ErrNotFound = errors.NewHTTPError(http.StatusNotFound, "User not found")
 )
