@@ -56,12 +56,12 @@ definitions:
         type: string
       id:
         type: integer
-      question_id:
-        type: integer
       responseAnswers:
         items:
           $ref: '#/definitions/models.ResponseAnswer'
         type: array
+      survey_id:
+        type: integer
       user_id:
         type: integer
     type: object
@@ -121,6 +121,15 @@ definitions:
       title:
         example: This is title
         type: string
+    type: object
+  response.ReponseAnswerRequest:
+    properties:
+      option_id:
+        example: 1
+        type: integer
+      question_id:
+        example: 1
+        type: integer
     type: object
   survey.FullSurveyRequest:
     properties:
@@ -207,6 +216,33 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /api/responses/my:
+    get:
+      consumes:
+      - application/json
+      description: Responded Survey list by user ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Survey'
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Responded Survey list by user ID
+      tags:
+      - Responses
   /api/survey/{surveyID}/questions:
     get:
       consumes:
@@ -378,6 +414,115 @@ paths:
       summary: Update Question by ID
       tags:
       - Questions
+  /api/survey/{surveyID}/responses:
+    get:
+      consumes:
+      - application/json
+      description: Response list by survey ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Response'
+              type: array
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Response list by survey ID
+      tags:
+      - Responses
+    post:
+      consumes:
+      - application/json
+      description: Response creation
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Request body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/response.ReponseAnswerRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new Response with answers
+      tags:
+      - Responses
+  /api/survey/{surveyID}/responses/{responseID}:
+    get:
+      consumes:
+      - application/json
+      description: Response answers by response ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Response ID
+        in: path
+        name: responseID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ResponseAnswer'
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Response answers by response ID
+      tags:
+      - Responses
   /api/surveys:
     get:
       consumes:

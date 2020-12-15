@@ -16,6 +16,7 @@ import (
 	"github.com/yerzhan-karatay/survey-webapp-backend/errors"
 	"github.com/yerzhan-karatay/survey-webapp-backend/services/auth"
 	"github.com/yerzhan-karatay/survey-webapp-backend/services/question"
+	"github.com/yerzhan-karatay/survey-webapp-backend/services/response"
 	"github.com/yerzhan-karatay/survey-webapp-backend/services/survey"
 	"github.com/yerzhan-karatay/survey-webapp-backend/services/user"
 
@@ -69,6 +70,12 @@ func main() {
 	questionService := question.GetService(questionRepo)
 
 	r = question.MakeHTTPHandler(r, questionService)
+
+	// Response service
+	responseRepo := response.GetRepository(db)
+	responseService := response.GetService(responseRepo)
+
+	r = response.MakeHTTPHandler(r, responseService)
 
 	// Swagger settings
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
