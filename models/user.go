@@ -8,12 +8,13 @@ import (
 
 // User represents the model for an user and is mapping to `user` table
 type User struct {
-	ID       int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	Email    string    `json:"email" gorm:"column:email;type:varchar(255);not null;unique"`
-	Password string    `json:"password,omitempty" gorm:"column:password;type:varchar(100);not null"`
-	FullName string    `json:"full_name" gorm:"column:full_name;type:varchar(100);not null"`
-	Created  time.Time `json:"created" gorm:"autoCreateTime;column:created;type:timestamp"`
-	Surveys  []Survey
+	ID        int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	Email     string    `json:"email" gorm:"column:email;type:varchar(255);not null;unique"`
+	Password  string    `json:"password,omitempty" gorm:"column:password;type:varchar(100);not null"`
+	FullName  string    `json:"full_name" gorm:"column:full_name;type:varchar(100);not null"`
+	Created   time.Time `json:"created" gorm:"autoCreateTime;column:created;type:timestamp"`
+	Surveys   []Survey
+	Responses []Response
 }
 
 // TableName set the table name to "user"
