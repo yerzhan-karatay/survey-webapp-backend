@@ -12,7 +12,7 @@ type User struct {
 	Email     string    `json:"email" gorm:"column:email;type:varchar(255);not null;unique"`
 	Password  string    `json:"password,omitempty" gorm:"column:password;type:varchar(100);not null"`
 	FullName  string    `json:"full_name" gorm:"column:full_name;type:varchar(100);not null"`
-	Created   time.Time `json:"created" gorm:"autoCreateTime;column:created;type:timestamp"`
+	Created   time.Time `json:"created" gorm:"column:created"`
 	Surveys   []Survey
 	Responses []Response
 }

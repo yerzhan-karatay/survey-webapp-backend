@@ -132,6 +132,28 @@ definitions:
         example: This is survey title
         type: string
     type: object
+  survey.FullSurveyWithQnA:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/survey.FullSurveyWithQnAQuestion'
+        type: array
+      survey:
+        $ref: '#/definitions/models.Survey'
+    type: object
+  survey.FullSurveyWithQnAQuestion:
+    properties:
+      id:
+        example: 1
+        type: integer
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      title:
+        example: This is question Title
+        type: string
+    type: object
   survey.QuestionRequest:
     properties:
       options:
@@ -499,6 +521,35 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update Survey by ID
+      tags:
+      - Surveys
+  /api/surveys/{id}/full:
+    get:
+      consumes:
+      - application/json
+      description: Survey list with Questions and Answer options
+      parameters:
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/survey.FullSurveyWithQnA'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Survey list with Questions and Answer options
       tags:
       - Surveys
   /api/surveys/full:

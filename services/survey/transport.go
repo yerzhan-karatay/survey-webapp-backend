@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/yerzhan-karatay/survey-webapp-backend/errors"
+	"github.com/yerzhan-karatay/survey-webapp-backend/models"
 	"github.com/yerzhan-karatay/survey-webapp-backend/services/security"
 )
 
@@ -71,6 +72,25 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 			ctx.Error(err)
 		} else {
 			ctx.JSON(http.StatusNoContent, gin.H{})
+		}
+
+		return
+	})
+
+	groupRoutes.GET("/:id/full", func(ctx *gin.Context) {
+		surveyID, _ := strconv.Atoi(ctx.Param("id"))
+
+		user, errToken := security.JWTAuthService().GetUserByToken(ctx)
+		if errToken != nil {
+			ctx.Error(errToken)
+			return
+		}
+
+		surveyWithQnA, err := s.GetSurveyWithQnA(surveyID, user.ID)
+		if err != nil {
+			ctx.Error(err)
+		} else {
+			ctx.JSON(http.StatusOK, surveyWithQnA)
 		}
 
 		return
@@ -155,10 +175,23 @@ type QuestionRequest struct {
 	Options       []string `json:"options" gorm:"column:options;type:ARRAY" example:"25,28"`
 }
 
-// FullSurveyRequest is the request structure for survey POST api
+// FullSurveyRequest is the request structure for survey full POST api
 type FullSurveyRequest struct {
 	SurveyTitle string            `json:"title" gorm:"column:title;type:varchar(255);not null" example:"This is survey title"`
 	Questions   []QuestionRequest `json:"questions" gorm:"column:questions;type:ARRAY"`
+}
+
+// FullSurveyWithQnAQuestion is the request structure for survey full POST api
+type FullSurveyWithQnAQuestion struct {
+	QuestionID    int              `json:"id" gorm:"column:id;type:int(11);not null" example:"1"`
+	QuestionTitle string           `json:"title" gorm:"column:title;type:varchar(255);not null" example:"This is question Title"`
+	Options       []*models.Option `json:"options" gorm:"column:options;type:ARRAY"`
+}
+
+// FullSurveyWithQnA is the response structure for survey full GET api
+type FullSurveyWithQnA struct {
+	Survey    models.Survey               `json:"survey"`
+	Questions []FullSurveyWithQnAQuestion `json:"questions" gorm:"column:questions;type:ARRAY"`
 }
 
 var (

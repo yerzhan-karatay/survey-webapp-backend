@@ -8,6 +8,7 @@ import (
 type Service interface {
 	CreateSurvey(surveyTitle string, userID int) error
 	CreateSurveyWithQnA(FullSurveyRequest, int) error
+	GetSurveyWithQnA(int, int) (FullSurveyWithQnA, error)
 	GetSurveyListByUserID(int) ([]*models.Survey, error)
 	GetSurveyByID(int) (models.Survey, error)
 	UpdateSurvey(int, string, int) error
@@ -38,9 +39,6 @@ func GetService(SurveyRepo Repository) Service {
 // @Failure 500 {string} ErrInsertFailed
 // @Router /api/surveys/full [post]
 func (s *service) CreateSurveyWithQnA(fullSurveyRequest FullSurveyRequest, userID int) error {
-	// var survey models.Survey
-	// survey.Title = fullSurveyRequest.SurveyTitle
-	// survey.UserID = userID
 	survey := &models.Survey{
 		Title:  fullSurveyRequest.SurveyTitle,
 		UserID: userID,
@@ -95,6 +93,60 @@ func (s *service) CreateSurvey(surveyTitle string, userID int) error {
 		return err
 	}
 	return nil
+}
+
+// GetSurveyWithQnA godoc
+// @Summary Get Survey list with Questions and Answer options
+// @Description Survey list with Questions and Answer options
+// @Security ApiKeyAuth
+// @Tags Surveys
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Survey ID"
+// @Success 200 {array} FullSurveyWithQnA
+// @Failure 404 {string} ErrNotFound
+// @Router /api/surveys/{id}/full [get]
+func (s *service) GetSurveyWithQnA(surveyID int, userID int) (FullSurveyWithQnA, error) {
+	// TODO: change sql query to complex and do all operations in one query
+	var fullSurvey FullSurveyWithQnA
+	var survey models.Survey
+
+	// Step 1 - Get Survey and validate
+	err := s.SurveyRepository.GetSurveyByID(&survey, surveyID)
+	if err != nil {
+		return fullSurvey, err
+	}
+
+	if userID != survey.UserID {
+		return fullSurvey, ErrAccessDenied
+	}
+
+	fullSurvey.Survey = survey
+
+	// Step 2 - Get Questions
+	var questions []*models.Question
+	errQs := s.SurveyRepository.GetQuestionListBySurveyID(&questions, survey.ID)
+	if errQs != nil {
+		return fullSurvey, errQs
+	}
+	fullQuestionList := make([]FullSurveyWithQnAQuestion, len(questions)-1)
+	// Step 3 - Get Options
+	for _, question := range questions {
+		var options []*models.Option
+
+		s.SurveyRepository.GetOptionsByQuestionID(&options, question.ID)
+
+		fullQuestion := FullSurveyWithQnAQuestion{
+			QuestionID:    question.ID,
+			QuestionTitle: question.Title,
+			Options:       options,
+		}
+		fullQuestionList = append(fullQuestionList, fullQuestion)
+	}
+
+	fullSurvey.Questions = fullQuestionList
+
+	return fullSurvey, nil
 }
 
 // GetSurveyListByUserID godoc

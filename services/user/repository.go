@@ -1,6 +1,8 @@
 package user
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"github.com/yerzhan-karatay/survey-webapp-backend/models"
 )
@@ -29,6 +31,7 @@ func (r *repository) CreateUser(userRequest CreateUserRequest) (models.User, err
 		Email:    userRequest.Email,
 		Password: userRequest.Password,
 		FullName: userRequest.FullName,
+		Created:  time.Now(),
 	}
 	r.db.Create(&user)
 	if r.db.Table("user").Where("email = ?", user.Email).RecordNotFound() {

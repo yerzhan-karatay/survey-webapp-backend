@@ -574,6 +574,52 @@ var doc = `{
                 }
             }
         },
+        "/api/surveys/{id}/full": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Survey list with Questions and Answer options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Surveys"
+                ],
+                "summary": "Get Survey list with Questions and Answer options",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/survey.FullSurveyWithQnA"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "post": {
                 "description": "User creation",
@@ -901,6 +947,39 @@ var doc = `{
                 "title": {
                     "type": "string",
                     "example": "This is survey title"
+                }
+            }
+        },
+        "survey.FullSurveyWithQnA": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/survey.FullSurveyWithQnAQuestion"
+                    }
+                },
+                "survey": {
+                    "$ref": "#/definitions/models.Survey"
+                }
+            }
+        },
+        "survey.FullSurveyWithQnAQuestion": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "example": "This is question Title"
                 }
             }
         },

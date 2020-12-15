@@ -1,6 +1,8 @@
 package question
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"github.com/yerzhan-karatay/survey-webapp-backend/models"
 )
@@ -27,6 +29,7 @@ func GetRepository(db *gorm.DB) Repository {
 
 // CreateQuestion create question record
 func (r *repository) CreateQuestion(question *models.Question) error {
+	question.Created = time.Now()
 	r.db.Create(question)
 	if r.db.Table("question").Where("id = ?", question.ID).RecordNotFound() {
 		return ErrInsertFailed
