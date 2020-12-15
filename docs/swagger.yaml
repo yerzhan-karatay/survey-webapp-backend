@@ -1,4 +1,21 @@
 definitions:
+  auth.TokenResponse:
+    properties:
+      token:
+        example: dummy token
+        type: string
+    required:
+    - token
+    type: object
+  models.AuthCredentials:
+    properties:
+      email:
+        example: mail@mail.com
+        type: string
+      password:
+        example: "123"
+        type: string
+    type: object
   user.CreateUserRequest:
     properties:
       email:
@@ -14,7 +31,7 @@ definitions:
     - email
     - password
     type: object
-  user.CreateUserResponse:
+  user.TokenResponse:
     properties:
       token:
         example: dummy token
@@ -33,6 +50,36 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User authorization
+      parameters:
+      - description: Login user
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: User authorization
+      tags:
+      - Auth
   /users:
     post:
       consumes:
@@ -51,7 +98,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/user.CreateUserResponse'
+            $ref: '#/definitions/user.TokenResponse'
         "400":
           description: Bad Request
           schema:
@@ -63,4 +110,19 @@ paths:
       summary: Add a new user
       tags:
       - Users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+  OAuth2Application:
+    authorizationUrl: ""
+    flow: application
+    scopes:
+      admin: ' Grants read and write access to administrative information'
+      write: ' Grants write access'
+    tokenUrl: http://localhost:8080/login
+    type: oauth2
 swagger: "2.0"

@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/yerzhan-karatay/survey-webapp-backend/services/security"
 )
 
 // Service is the interface of User service
@@ -27,17 +28,15 @@ func GetService(userRepo Repository) Service {
 // @Accept  json
 // @Produce  json
 // @Param requestBody body CreateUserRequest true "Create user"
-// @Success 201 {object} CreateUserResponse
+// @Success 201 {object} TokenResponse
 // @Failure 400 {string} ErrBadRequest
 // @Failure 500 {string} ErrInsertFailed
 // @Router /users [post]
 func (s *service) CreateUser(ctx *gin.Context, request CreateUserRequest) (string, error) {
-	var token string = "dummy token"
-
-	err := s.userRepository.CreateUser(request)
+	user, err := s.userRepository.CreateUser(request)
 	if err != nil {
 		return "", err
 	}
-
+	token := security.JWTAuthService().GenerateToken(user)
 	return token, nil
 }

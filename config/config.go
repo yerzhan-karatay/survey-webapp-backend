@@ -20,6 +20,10 @@ type Config struct {
 		MaxOpenConns    int    `yaml:"maxOpenConns"`
 		ConnMaxLifetime string `yaml:"connMaxLifetime"`
 	}
+	SECURITY struct {
+		Resource  string `yaml:"resource"`
+		SecretKey string `yaml:"secretKey"`
+	}
 }
 
 var config *Config

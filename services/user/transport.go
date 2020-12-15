@@ -20,7 +20,7 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 		if err != nil {
 			ctx.Error(err)
 		} else {
-			ctx.JSON(http.StatusCreated, CreateUserResponse{
+			ctx.JSON(http.StatusCreated, TokenResponse{
 				Token: token,
 			})
 		}
@@ -31,8 +31,8 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 	return r
 }
 
-// CreateUserResponse is the response structure for user POST api
-type CreateUserResponse struct {
+// TokenResponse is the response structure for user POST api
+type TokenResponse struct {
 	Token string `json:"token" binding:"required" example:"dummy token"`
 }
 

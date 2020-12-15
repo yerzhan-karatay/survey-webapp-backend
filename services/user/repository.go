@@ -5,8 +5,9 @@ import (
 	"github.com/yerzhan-karatay/survey-webapp-backend/models"
 )
 
+// Repository includes repository method for user
 type Repository interface {
-	CreateUser(CreateUserRequest) error
+	CreateUser(CreateUserRequest) (models.User, error)
 }
 
 type repository struct {
@@ -21,7 +22,7 @@ func GetRepository(db *gorm.DB) Repository {
 }
 
 // CreateUser create user record
-func (r *repository) CreateUser(userRequest CreateUserRequest) error {
+func (r *repository) CreateUser(userRequest CreateUserRequest) (models.User, error) {
 	user := &models.User{
 		Email:    userRequest.Email,
 		Password: userRequest.Password,
@@ -29,7 +30,7 @@ func (r *repository) CreateUser(userRequest CreateUserRequest) error {
 	}
 	r.db.Create(user)
 	if r.db.Table("user").Where("email = ?", user.Email).RecordNotFound() {
-		return ErrInsertFailed
+		return *user, ErrInsertFailed
 	}
-	return nil
+	return *user, nil
 }
