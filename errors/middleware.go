@@ -40,16 +40,21 @@ func HandleHTTPError() gin.HandlerFunc {
 // AuthorizeJWT authorize an access
 func AuthorizeJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const BearerSchema = "Bearer"
+		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
-		tokenString := authHeader[len(BearerSchema):]
-		token, err := security.JWTAuthService().ValidateToken(tokenString)
-		if token.Valid {
-			claims := token.Claims.(jwt.MapClaims)
-			fmt.Println(claims)
-		} else {
-			fmt.Println(err)
+		if len(authHeader) < len(BearerSchema) {
+			fmt.Println("Token not found")
 			c.AbortWithStatus(http.StatusUnauthorized)
+		} else {
+			tokenString := authHeader[len(BearerSchema):]
+			token, err := security.JWTAuthService().ValidateToken(tokenString)
+			if token.Valid {
+				claims := token.Claims.(jwt.MapClaims)
+				fmt.Println(claims)
+			} else {
+				fmt.Println(err)
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}
 		}
 
 	}
