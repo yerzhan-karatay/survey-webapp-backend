@@ -13,6 +13,7 @@ type User struct {
 	Password string    `json:"password,omitempty" gorm:"column:password;type:varchar(100);not null"`
 	FullName string    `json:"full_name" gorm:"column:full_name;type:varchar(100);not null"`
 	Created  time.Time `json:"created" gorm:"autoCreateTime;column:created;type:timestamp"`
+	Surveys  []Survey
 }
 
 // TableName set the table name to "user"

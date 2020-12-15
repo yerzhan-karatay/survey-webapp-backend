@@ -46,6 +46,8 @@ func Get() *gorm.DB {
 // InitLocalDB initialize local database
 func InitLocalDB(db *gorm.DB) {
 	db.DropTableIfExists("user")
+	db.DropTableIfExists("survey")
 
 	db.CreateTable(&models.User{})
+	db.CreateTable(&models.Survey{})
 }

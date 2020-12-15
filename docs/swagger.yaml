@@ -16,6 +16,17 @@ definitions:
         example: "123"
         type: string
     type: object
+  models.Survey:
+    properties:
+      created:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.User:
     properties:
       created:
@@ -27,6 +38,16 @@ definitions:
       id:
         type: integer
       password:
+        type: string
+      surveys:
+        items:
+          $ref: '#/definitions/models.Survey'
+        type: array
+    type: object
+  survey.TitleRequest:
+    properties:
+      title:
+        example: This is title
         type: string
     type: object
   user.CreateUserRequest:
@@ -63,6 +84,155 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /api/surveys:
+    get:
+      consumes:
+      - application/json
+      description: Survey list for loggedin user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Survey'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Survey list by user ID
+      tags:
+      - Surveys
+    post:
+      consumes:
+      - application/json
+      description: Survey creation
+      parameters:
+      - description: Survey title
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/survey.TitleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new Survey
+      tags:
+      - Surveys
+  /api/surveys/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Survey by ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.Survey'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Survey by ID
+      tags:
+      - Surveys
+    get:
+      consumes:
+      - application/json
+      description: Survey information by ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Survey'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Survey info by ID
+      tags:
+      - Surveys
+    put:
+      consumes:
+      - application/json
+      description: Update Survey by ID
+      parameters:
+      - description: Survey title
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/survey.TitleRequest'
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.Survey'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update Survey by ID
+      tags:
+      - Surveys
   /api/users:
     post:
       consumes:
