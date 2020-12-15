@@ -54,6 +54,28 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 		return
 	})
 
+	groupRoutes.POST("/full", func(ctx *gin.Context) {
+		user, errToken := security.JWTAuthService().GetUserByToken(ctx)
+		if errToken != nil {
+			ctx.Error(errToken)
+			return
+		}
+
+		var request FullSurveyRequest
+		if err := ctx.ShouldBindJSON(&request); err != nil {
+			ctx.Error(ErrBadRequest)
+			return
+		}
+		err := s.CreateSurveyWithQnA(request, user.ID)
+		if err != nil {
+			ctx.Error(err)
+		} else {
+			ctx.JSON(http.StatusNoContent, gin.H{})
+		}
+
+		return
+	})
+
 	groupRoutes.GET("/:id", func(ctx *gin.Context) {
 		surveyID, _ := strconv.Atoi(ctx.Param("id"))
 
@@ -125,6 +147,18 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 // TitleRequest is the request structure for survey POST api
 type TitleRequest struct {
 	Title string `json:"title" gorm:"column:title;type:varchar(255);not null;" example:"This is title"`
+}
+
+// QuestionRequest is the request structure for survey POST api
+type QuestionRequest struct {
+	QuestionTitle string   `json:"title" gorm:"column:title;type:varchar(255);not null;" example:"How old are you?"`
+	Options       []string `json:"options" gorm:"column:options;type:ARRAY" example:"25,28"`
+}
+
+// FullSurveyRequest is the request structure for survey POST api
+type FullSurveyRequest struct {
+	SurveyTitle string            `json:"title" gorm:"column:title;type:varchar(255);not null" example:"This is survey title"`
+	Questions   []QuestionRequest `json:"questions" gorm:"column:questions;type:ARRAY"`
 }
 
 var (

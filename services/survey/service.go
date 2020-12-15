@@ -7,6 +7,7 @@ import (
 // Service is the interface of Survey service
 type Service interface {
 	CreateSurvey(surveyTitle string, userID int) error
+	CreateSurveyWithQnA(FullSurveyRequest, int) error
 	GetSurveyListByUserID(int) ([]*models.Survey, error)
 	GetSurveyByID(int) (models.Survey, error)
 	UpdateSurvey(int, string, int) error
@@ -22,6 +23,54 @@ func GetService(SurveyRepo Repository) Service {
 	return &service{
 		SurveyRepository: SurveyRepo,
 	}
+}
+
+// CreateSurveyWithQnA godoc
+// @Summary Add a new Survey with Questions and Answer options
+// @Description Survey creation with Questions and Answer options
+// @Security ApiKeyAuth
+// @Tags Surveys
+// @Accept  json
+// @Produce  json
+// @Param requestBody body FullSurveyRequest true "Survey title"
+// @Success 201
+// @Failure 400 {string} ErrBadRequest
+// @Failure 500 {string} ErrInsertFailed
+// @Router /api/surveys/full [post]
+func (s *service) CreateSurveyWithQnA(fullSurveyRequest FullSurveyRequest, userID int) error {
+	// var survey models.Survey
+	// survey.Title = fullSurveyRequest.SurveyTitle
+	// survey.UserID = userID
+	survey := &models.Survey{
+		Title:  fullSurveyRequest.SurveyTitle,
+		UserID: userID,
+	}
+	// Step 1 - Create survey
+	err := s.SurveyRepository.CreateSurvey(survey)
+	if err != nil {
+		return err
+	}
+
+	// Step 2 - Create Questions
+	for _, qst := range fullSurveyRequest.Questions {
+		question := &models.Question{
+			Title:    qst.QuestionTitle,
+			SurveyID: survey.ID,
+		}
+
+		s.SurveyRepository.CreateQuestionPerSurvey(question)
+
+		// Step 3 - Create Options
+		for _, ops := range qst.Options {
+			option := &models.Option{
+				Title:      ops,
+				QuestionID: question.ID,
+			}
+
+			s.SurveyRepository.CreateOptionsPerQuestion(option)
+		}
+	}
+	return nil
 }
 
 // CreateSurvey godoc
@@ -98,7 +147,7 @@ func (s *service) GetSurveyByID(surveyID int) (models.Survey, error) {
 // @Produce  json
 // @Param requestBody body TitleRequest true "Survey title"
 // @Param id path int true "Survey ID"
-// @Success 204 {object} models.Survey
+// @Success 204
 // @Failure 404 {string} ErrNotFound
 // @Failure 403 {string} ErrAccessDenied
 // @Router /api/surveys/{id} [put]
@@ -131,7 +180,7 @@ func (s *service) UpdateSurvey(surveyID int, newTitle string, userID int) error 
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Survey ID"
-// @Success 204 {object} models.Survey
+// @Success 204
 // @Failure 404 {string} ErrNotFound
 // @Failure 403 {string} ErrAccessDenied
 // @Router /api/surveys/{id} [delete]

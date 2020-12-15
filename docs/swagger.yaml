@@ -16,12 +16,80 @@ definitions:
         example: "123"
         type: string
     type: object
+  models.Option:
+    properties:
+      created:
+        type: string
+      id:
+        type: integer
+      question_id:
+        type: integer
+      responseAnswers:
+        items:
+          $ref: '#/definitions/models.ResponseAnswer'
+        type: array
+      title:
+        type: string
+    type: object
+  models.Question:
+    properties:
+      created:
+        type: string
+      id:
+        type: integer
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      responseAnswers:
+        items:
+          $ref: '#/definitions/models.ResponseAnswer'
+        type: array
+      survey_id:
+        type: integer
+      title:
+        type: string
+    type: object
+  models.Response:
+    properties:
+      created:
+        type: string
+      id:
+        type: integer
+      question_id:
+        type: integer
+      responseAnswers:
+        items:
+          $ref: '#/definitions/models.ResponseAnswer'
+        type: array
+      user_id:
+        type: integer
+    type: object
+  models.ResponseAnswer:
+    properties:
+      id:
+        type: integer
+      option_id:
+        type: integer
+      question_id:
+        type: integer
+      response_id:
+        type: integer
+    type: object
   models.Survey:
     properties:
       created:
         type: string
       id:
         type: integer
+      questions:
+        items:
+          $ref: '#/definitions/models.Question'
+        type: array
+      responses:
+        items:
+          $ref: '#/definitions/models.Response'
+        type: array
       title:
         type: string
       user_id:
@@ -39,10 +107,43 @@ definitions:
         type: integer
       password:
         type: string
+      responses:
+        items:
+          $ref: '#/definitions/models.Response'
+        type: array
       surveys:
         items:
           $ref: '#/definitions/models.Survey'
         type: array
+    type: object
+  question.TitleRequest:
+    properties:
+      title:
+        example: This is title
+        type: string
+    type: object
+  survey.FullSurveyRequest:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/survey.QuestionRequest'
+        type: array
+      title:
+        example: This is survey title
+        type: string
+    type: object
+  survey.QuestionRequest:
+    properties:
+      options:
+        example:
+        - "25"
+        - "28"
+        items:
+          type: string
+        type: array
+      title:
+        example: How old are you?
+        type: string
     type: object
   survey.TitleRequest:
     properties:
@@ -84,6 +185,177 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /api/survey/{surveyID}/questions:
+    get:
+      consumes:
+      - application/json
+      description: Survey list for loggedin user
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Question'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Survey list by user ID
+      tags:
+      - Questions
+    post:
+      consumes:
+      - application/json
+      description: Question creation
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Question title
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/question.TitleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new Question
+      tags:
+      - Questions
+  /api/survey/{surveyID}/questions/{questionID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Question by ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Question ID
+        in: path
+        name: questionID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Question by ID
+      tags:
+      - Questions
+    get:
+      consumes:
+      - application/json
+      description: Question information by ID
+      parameters:
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Question ID
+        in: path
+        name: questionID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Question'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get Question info by ID
+      tags:
+      - Questions
+    put:
+      consumes:
+      - application/json
+      description: Update Question by ID
+      parameters:
+      - description: Question title
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/question.TitleRequest'
+      - description: Survey ID
+        in: path
+        name: surveyID
+        required: true
+        type: integer
+      - description: Question ID
+        in: path
+        name: questionID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update Question by ID
+      tags:
+      - Questions
   /api/surveys:
     get:
       consumes:
@@ -151,9 +423,7 @@ paths:
       - application/json
       responses:
         "204":
-          description: No Content
-          schema:
-            $ref: '#/definitions/models.Survey'
+          description: ""
         "403":
           description: Forbidden
           schema:
@@ -217,9 +487,7 @@ paths:
       - application/json
       responses:
         "204":
-          description: No Content
-          schema:
-            $ref: '#/definitions/models.Survey'
+          description: ""
         "403":
           description: Forbidden
           schema:
@@ -231,6 +499,36 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update Survey by ID
+      tags:
+      - Surveys
+  /api/surveys/full:
+    post:
+      consumes:
+      - application/json
+      description: Survey creation with Questions and Answer options
+      parameters:
+      - description: Survey title
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/survey.FullSurveyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new Survey with Questions and Answer options
       tags:
       - Surveys
   /api/users:

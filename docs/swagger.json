@@ -14,6 +14,272 @@
         "version": "1.0"
     },
     "paths": {
+        "/api/survey/{surveyID}/questions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Survey list for loggedin user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Get Survey list by user ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "surveyID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Question"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Question creation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Add a new Question",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "surveyID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Question title",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/question.TitleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/survey/{surveyID}/questions/{questionID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Question information by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Get Question info by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "surveyID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Question ID",
+                        "name": "questionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Question"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update Question by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Update Question by ID",
+                "parameters": [
+                    {
+                        "description": "Question title",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/question.TitleRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "surveyID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Question ID",
+                        "name": "questionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete Question by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Delete Question by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Survey ID",
+                        "name": "surveyID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Question ID",
+                        "name": "questionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/surveys": {
             "get": {
                 "security": [
@@ -75,6 +341,54 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/survey.TitleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/surveys/full": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Survey creation with Questions and Answer options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Surveys"
+                ],
+                "summary": "Add a new Survey with Questions and Answer options",
+                "parameters": [
+                    {
+                        "description": "Survey title",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/survey.FullSurveyRequest"
                         }
                     }
                 ],
@@ -182,10 +496,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/models.Survey"
-                        }
+                        "description": ""
                     },
                     "403": {
                         "description": "Forbidden",
@@ -229,10 +540,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/models.Survey"
-                        }
+                        "description": ""
                     },
                     "403": {
                         "description": "Forbidden",
@@ -402,6 +710,98 @@
                 }
             }
         },
+        "models.Option": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "responseAnswers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ResponseAnswer"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Question": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "responseAnswers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ResponseAnswer"
+                    }
+                },
+                "survey_id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Response": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "responseAnswers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ResponseAnswer"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ResponseAnswer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "option_id": {
+                    "type": "integer"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "response_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Survey": {
             "type": "object",
             "properties": {
@@ -410,6 +810,18 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Question"
+                    }
+                },
+                "responses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Response"
+                    }
                 },
                 "title": {
                     "type": "string"
@@ -437,11 +849,60 @@
                 "password": {
                     "type": "string"
                 },
+                "responses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Response"
+                    }
+                },
                 "surveys": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Survey"
                     }
+                }
+            }
+        },
+        "question.TitleRequest": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "example": "This is title"
+                }
+            }
+        },
+        "survey.FullSurveyRequest": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/survey.QuestionRequest"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "example": "This is survey title"
+                }
+            }
+        },
+        "survey.QuestionRequest": {
+            "type": "object",
+            "properties": {
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "25",
+                        "28"
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "example": "How old are you?"
                 }
             }
         },

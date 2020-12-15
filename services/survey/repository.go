@@ -8,6 +8,8 @@ import (
 // Repository includes repository method for survey
 type Repository interface {
 	CreateSurvey(*models.Survey) error
+	CreateQuestionPerSurvey(*models.Question) error
+	CreateOptionsPerQuestion(option *models.Option) error
 	GetSurveyListByUserID(*[]*models.Survey, int) error
 	GetSurveyByID(*models.Survey, int) error
 	UpdateSurvey(*models.Survey) error
@@ -27,8 +29,26 @@ func GetRepository(db *gorm.DB) Repository {
 
 // CreateSurvey create survey record
 func (r *repository) CreateSurvey(survey *models.Survey) error {
-	r.db.Create(survey)
-	if r.db.Table("survey").Where("id = ?", survey.ID).RecordNotFound() {
+	r.db.Create(&survey)
+	if r.db.Table("survey").Where("id = ?", survey.ID).First(survey).RecordNotFound() {
+		return ErrInsertFailed
+	}
+	return nil
+}
+
+// CreateQuestionPerSurvey create question record
+func (r *repository) CreateQuestionPerSurvey(question *models.Question) error {
+	r.db.Create(&question)
+	if r.db.Table("question").Where("id = ?", question.ID).RecordNotFound() {
+		return ErrInsertFailed
+	}
+	return nil
+}
+
+// CreateOptionsPerQuestion create options record
+func (r *repository) CreateOptionsPerQuestion(option *models.Option) error {
+	r.db.Create(&option)
+	if r.db.Table("option").Where("id = ?", option.ID).RecordNotFound() {
 		return ErrInsertFailed
 	}
 	return nil
