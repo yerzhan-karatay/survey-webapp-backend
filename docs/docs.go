@@ -31,6 +31,52 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/login": {
+            "post": {
+                "description": "User authorization",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User authorization",
+                "parameters": [
+                    {
+                        "description": "Login user",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/responses/my": {
             "get": {
                 "security": [
@@ -81,7 +127,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Survey list for loggedin user",
+                "description": "Question list by survey ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -91,7 +137,7 @@ var doc = `{
                 "tags": [
                     "Questions"
                 ],
-                "summary": "Get Survey list by user ID",
+                "summary": "Get Question list by survey ID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -373,10 +419,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/models.Response"
-                                }
+                                "$ref": "#/definitions/response.ReponseAnswerResponse"
                             }
                         }
                     },
@@ -870,6 +913,12 @@ var doc = `{
                             "type": "string"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -902,52 +951,6 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "description": "User authorization",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "User authorization",
-                "parameters": [
-                    {
-                        "description": "Login user",
-                        "name": "requestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthCredentials"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
                         }
                     },
                     "404": {
@@ -1158,6 +1161,20 @@ var doc = `{
                 "question_id": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "response.ReponseAnswerResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/models.Response"
+                },
+                "response_answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ResponseAnswer"
+                    }
                 }
             }
         },

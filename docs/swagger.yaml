@@ -131,6 +131,15 @@ definitions:
         example: 1
         type: integer
     type: object
+  response.ReponseAnswerResponse:
+    properties:
+      response:
+        $ref: '#/definitions/models.Response'
+      response_answers:
+        items:
+          $ref: '#/definitions/models.ResponseAnswer'
+        type: array
+    type: object
   survey.FullSurveyRequest:
     properties:
       questions:
@@ -216,6 +225,36 @@ info:
   title: Swagger Survey service API
   version: "1.0"
 paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: User authorization
+      parameters:
+      - description: Login user
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: User authorization
+      tags:
+      - Auth
   /api/responses/my:
     get:
       consumes:
@@ -247,7 +286,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Survey list for loggedin user
+      description: Question list by survey ID
       parameters:
       - description: Survey ID
         in: path
@@ -269,7 +308,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
-      summary: Get Survey list by user ID
+      summary: Get Question list by survey ID
       tags:
       - Questions
     post:
@@ -432,9 +471,7 @@ paths:
           description: OK
           schema:
             items:
-              items:
-                $ref: '#/definitions/models.Response'
-              type: array
+              $ref: '#/definitions/response.ReponseAnswerResponse'
             type: array
         "403":
           description: Forbidden
@@ -750,6 +787,10 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
@@ -778,36 +819,6 @@ paths:
       summary: get user info
       tags:
       - Users
-  /login:
-    post:
-      consumes:
-      - application/json
-      description: User authorization
-      parameters:
-      - description: Login user
-        in: body
-        name: requestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.AuthCredentials'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/auth.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: User authorization
-      tags:
-      - Auth
 securityDefinitions:
   ApiKeyAuth:
     in: header

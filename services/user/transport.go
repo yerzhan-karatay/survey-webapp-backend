@@ -63,6 +63,8 @@ var (
 	ErrBadRequest = errors.NewHTTPError(http.StatusBadRequest, "Bad request")
 	// ErrInsertFailed means record is not persusted into table
 	ErrInsertFailed = errors.NewHTTPError(http.StatusInternalServerError, "Insert record failed")
+	// ErrUserExists means record is already exists with this email
+	ErrUserExists = errors.NewHTTPError(http.StatusConflict, "User with this email already exists")
 	// ErrNotFound means user was not found in the db by userId or email
 	ErrNotFound = errors.NewHTTPError(http.StatusNotFound, "User not found")
 )

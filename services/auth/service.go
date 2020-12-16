@@ -32,7 +32,7 @@ func GetService(userRepo Repository) Service {
 // @Success 200 {object} TokenResponse
 // @Failure 400 {string} ErrBadRequest
 // @Failure 404 {string} ErrNotFound
-// @Router /login [post]
+// @Router /api/login [post]
 func (s *service) Login(ctx *gin.Context, request models.AuthCredentials) (string, error) {
 	loggedInUser, err := s.authRepository.CheckUser(request)
 	if err != nil {

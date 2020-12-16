@@ -38,6 +38,16 @@ func GetService(QuestionRepo Repository) Service {
 // @Failure 500 {string} ErrInsertFailed
 // @Router /api/survey/{surveyID}/questions [post]
 func (s *service) CreateQuestion(questionTitle string, surveyID int) error {
+	var survey models.Survey
+	errSurvey := s.QuestionRepository.GetSurveyByID(&survey, surveyID)
+	if errSurvey != nil {
+		return errSurvey
+	}
+
+	if questionTitle == "" {
+		return ErrBadRequestTitle
+	}
+
 	question := &models.Question{
 		Title:    questionTitle,
 		SurveyID: surveyID,
@@ -50,8 +60,8 @@ func (s *service) CreateQuestion(questionTitle string, surveyID int) error {
 }
 
 // GetQuestionListBySurveyID godoc
-// @Summary Get Survey list by user ID
-// @Description Survey list for loggedin user
+// @Summary Get Question list by survey ID
+// @Description Question list by survey ID
 // @Security ApiKeyAuth
 // @Tags Questions
 // @Accept  json
@@ -61,6 +71,12 @@ func (s *service) CreateQuestion(questionTitle string, surveyID int) error {
 // @Failure 404 {string} ErrNotFound
 // @Router /api/survey/{surveyID}/questions [get]
 func (s *service) GetQuestionListBySurveyID(surveyID int) ([]*models.Question, error) {
+	var survey models.Survey
+	errSurvey := s.QuestionRepository.GetSurveyByID(&survey, surveyID)
+	if errSurvey != nil {
+		return nil, errSurvey
+	}
+
 	var questions []*models.Question
 	err := s.QuestionRepository.GetQuestionListBySurveyID(&questions, surveyID)
 	if err != nil {
@@ -107,6 +123,12 @@ func (s *service) GetQuestionByID(questionID int) (models.Question, error) {
 // @Failure 403 {string} ErrAccessDenied
 // @Router /api/survey/{surveyID}/questions/{questionID} [put]
 func (s *service) UpdateQuestion(questionID int, newTitle string, surveyID int) error {
+	var survey models.Survey
+	errSurvey := s.QuestionRepository.GetSurveyByID(&survey, surveyID)
+	if errSurvey != nil {
+		return errSurvey
+	}
+
 	var question models.Question
 
 	err := s.QuestionRepository.GetQuestionByID(&question, questionID)
@@ -116,6 +138,10 @@ func (s *service) UpdateQuestion(questionID int, newTitle string, surveyID int) 
 
 	if surveyID != question.SurveyID {
 		return ErrAccessDenied
+	}
+
+	if newTitle == "" {
+		return ErrBadRequestTitle
 	}
 
 	question.Title = newTitle
@@ -141,6 +167,12 @@ func (s *service) UpdateQuestion(questionID int, newTitle string, surveyID int) 
 // @Failure 403 {string} ErrAccessDenied
 // @Router /api/survey/{surveyID}/questions/{questionID} [delete]
 func (s *service) DeleteQuestion(questionID int, surveyID int) error {
+	var survey models.Survey
+	errSurvey := s.QuestionRepository.GetSurveyByID(&survey, surveyID)
+	if errSurvey != nil {
+		return errSurvey
+	}
+
 	var question models.Question
 
 	err := s.QuestionRepository.GetQuestionByID(&question, questionID)

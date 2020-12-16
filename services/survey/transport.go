@@ -166,7 +166,7 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 
 // TitleRequest is the request structure for survey POST api
 type TitleRequest struct {
-	Title string `json:"title" gorm:"column:title;type:varchar(255);not null;" example:"This is title"`
+	Title string `json:"title" gorm:"column:title;type:varchar(255);not null" example:"This is title"`
 }
 
 // QuestionRequest is the request structure for survey POST api
@@ -197,6 +197,8 @@ type FullSurveyWithQnA struct {
 var (
 	// ErrAccessDenied means user don't have access to this survey
 	ErrAccessDenied = errors.NewHTTPError(http.StatusForbidden, "Access to this survey denied")
+	// ErrBadRequestTitle means params are not correct
+	ErrBadRequestTitle = errors.NewHTTPError(http.StatusBadRequest, "Title is required")
 	// ErrBadRequest means params are not correct
 	ErrBadRequest = errors.NewHTTPError(http.StatusBadRequest, "Bad request")
 	// ErrInsertFailed means record is not persusted into table

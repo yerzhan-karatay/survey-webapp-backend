@@ -14,6 +14,7 @@ type Repository interface {
 	GetQuestionByID(*models.Question, int) error
 	UpdateQuestion(*models.Question) error
 	DeleteQuestion(*models.Question) error
+	GetSurveyByID(*models.Survey, int) error
 }
 
 type repository struct {
@@ -66,6 +67,14 @@ func (r *repository) DeleteQuestion(question *models.Question) error {
 	r.db.Delete(question)
 	if r.db.Table("question").Where("id = ?", question.ID).RecordNotFound() {
 		return ErrDeleteFailed
+	}
+	return nil
+}
+
+// GetSurveyByID get survey by id
+func (r *repository) GetSurveyByID(survey *models.Survey, surveyID int) error {
+	if err := r.db.Table("survey").Where("id = ?", surveyID).Find(survey).Error; err != nil {
+		return ErrNotFoundSurvey
 	}
 	return nil
 }

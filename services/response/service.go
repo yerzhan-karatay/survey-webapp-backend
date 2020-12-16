@@ -160,7 +160,7 @@ func (s *service) GetResponseAnswersByID(responseID int, userID int, surveyID in
 // @Accept  json
 // @Produce  json
 // @Param surveyID path int true "Survey ID"
-// @Success 200 {array} []models.Response
+// @Success 200 {array} ReponseAnswerResponse
 // @Failure 403 {string} ErrAccessDenied
 // @Failure 404 {string} ErrNotFound
 // @Router /api/survey/{surveyID}/responses [get]

@@ -84,6 +84,9 @@ func (s *service) CreateSurveyWithQnA(fullSurveyRequest FullSurveyRequest, userI
 // @Failure 500 {string} ErrInsertFailed
 // @Router /api/surveys [post]
 func (s *service) CreateSurvey(surveyTitle string, userID int) error {
+	if surveyTitle == "" {
+		return ErrBadRequestTitle
+	}
 	survey := &models.Survey{
 		Title:  surveyTitle,
 		UserID: userID,

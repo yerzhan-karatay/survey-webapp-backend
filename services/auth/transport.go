@@ -10,7 +10,7 @@ import (
 
 // MakeHTTPHandler mounts auth services to gin handler
 func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
-	r.POST("/login", func(ctx *gin.Context) {
+	r.POST("/api/login", func(ctx *gin.Context) {
 		var request models.AuthCredentials
 		if err := ctx.ShouldBindJSON(&request); err != nil {
 			ctx.Error(ErrBadRequest)

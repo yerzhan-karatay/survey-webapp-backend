@@ -135,10 +135,14 @@ var (
 	ErrAccessDenied = errors.NewHTTPError(http.StatusForbidden, "Access to this question denied")
 	// ErrBadRequest means params are not correct
 	ErrBadRequest = errors.NewHTTPError(http.StatusBadRequest, "Bad request")
+	// ErrBadRequestTitle means params are not correct
+	ErrBadRequestTitle = errors.NewHTTPError(http.StatusBadRequest, "Title is required")
 	// ErrInsertFailed means record is not persusted into table
 	ErrInsertFailed = errors.NewHTTPError(http.StatusInternalServerError, "Insert record failed")
 	// ErrNotFound means question was not found in the db
 	ErrNotFound = errors.NewHTTPError(http.StatusNotFound, "Question not found")
+	// ErrNotFoundSurvey means survey was not found in the db
+	ErrNotFoundSurvey = errors.NewHTTPError(http.StatusNotFound, "Survey not found")
 	// ErrUpdateFailed means question was not updated
 	ErrUpdateFailed = errors.NewHTTPError(http.StatusInternalServerError, "Question update failed")
 	// ErrDeleteFailed means question was not deleted from the db
