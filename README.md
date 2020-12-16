@@ -30,5 +30,11 @@ or
 go test ./cmd/...
 ```
 
-### API doc accessible via Swagger
+### API doc accessible via Swagger after `make run` command
 [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+
+### DB ER diagram
+![ER diagram](/docs/survey-db-ER.png)
+
+### APIs draft
+![APIs draft](/docs/apis-structure.png)
