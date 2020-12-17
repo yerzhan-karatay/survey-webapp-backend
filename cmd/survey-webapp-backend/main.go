@@ -44,6 +44,7 @@ import (
 
 func main() {
 	r := gin.Default()
+	r.Use(errors.CORSMiddleware())
 	r.Use(errors.HandleHTTPError())
 	db := db.Get()
 

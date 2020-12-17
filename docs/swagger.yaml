@@ -140,6 +140,21 @@ definitions:
           $ref: '#/definitions/models.ResponseAnswer'
         type: array
     type: object
+  response.RespondedSurveys:
+    properties:
+      created:
+        example: 2020 Jun 3rd
+        type: string
+      response_id:
+        example: 1
+        type: integer
+      survey_id:
+        example: 1
+        type: integer
+      survey_title:
+        example: This is survey
+        type: string
+    type: object
   survey.FullSurveyRequest:
     properties:
       questions:
@@ -267,7 +282,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Survey'
+              $ref: '#/definitions/response.RespondedSurveys'
             type: array
         "403":
           description: Forbidden

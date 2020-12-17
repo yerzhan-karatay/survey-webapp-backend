@@ -101,7 +101,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Survey"
+                                "$ref": "#/definitions/response.RespondedSurveys"
                             }
                         }
                     },
@@ -1175,6 +1175,27 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.ResponseAnswer"
                     }
+                }
+            }
+        },
+        "response.RespondedSurveys": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string",
+                    "example": "2020 Jun 3rd"
+                },
+                "response_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "survey_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "survey_title": {
+                    "type": "string",
+                    "example": "This is survey"
                 }
             }
         },
