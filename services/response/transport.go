@@ -3,6 +3,7 @@ package response
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yerzhan-karatay/survey-webapp-backend/errors"
@@ -110,6 +111,14 @@ type ReponseAnswerRequest struct {
 type ReponseAnswerResponse struct {
 	ResponseAnswers []*models.ResponseAnswer `json:"response_answers" gorm:"column:response_answers;type:array"`
 	Response        *models.Response         `json:"response" gorm:"column:response;not null"`
+}
+
+// RespondedSurveys is the response structure for responsed survey GET api
+type RespondedSurveys struct {
+	SurveyID    int       `json:"survey_id" example:"1"`
+	ResponseID  int       `json:"response_id" example:"1"`
+	SurveyTitle string    `json:"survey_title" example:"This is survey"`
+	Created     time.Time `json:"created" example:"2020 Jun 3rd"`
 }
 
 var (

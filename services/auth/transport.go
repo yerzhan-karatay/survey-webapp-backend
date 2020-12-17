@@ -33,6 +33,6 @@ func MakeHTTPHandler(r *gin.Engine, s Service) *gin.Engine {
 var (
 	// ErrBadRequest means params are not correct
 	ErrBadRequest = errors.NewHTTPError(400, "Bad request")
-	// ErrNotFound means user was not found in the db or incorrect password
-	ErrNotFound = errors.NewHTTPError(http.StatusNotFound, "Not found user")
+	// ErrNotFound means user was not found in the db
+	ErrNotFound = errors.NewHTTPError(http.StatusNotFound, "Email or password are incorrect")
 )

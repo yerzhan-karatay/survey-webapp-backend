@@ -8,7 +8,7 @@ import (
 type Service interface {
 	CreateResponse(int, int, []ReponseAnswerRequest) error
 	GetResponsesBySurveyID(int, int) ([]ReponseAnswerResponse, error)
-	GetResponsedSurveysByUserID(int) ([]models.Survey, error)
+	GetResponsedSurveysByUserID(int) ([]RespondedSurveys, error)
 	GetResponseAnswersByID(int, int, int) ([]*models.ResponseAnswer, error)
 }
 
@@ -85,11 +85,11 @@ func (s *service) CreateResponse(userID int, surveyID int, responseAns []Reponse
 // @Tags Responses
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} models.Survey
+// @Success 200 {array} RespondedSurveys
 // @Failure 403 {string} ErrAccessDenied
 // @Failure 404 {string} ErrNotFound
 // @Router /api/responses/my [get]
-func (s *service) GetResponsedSurveysByUserID(userID int) ([]models.Survey, error) {
+func (s *service) GetResponsedSurveysByUserID(userID int) ([]RespondedSurveys, error) {
 	var responses []*models.Response
 	err := s.ResponseRepository.GetResponsesByUserID(&responses, userID)
 	if err != nil {
@@ -97,11 +97,11 @@ func (s *service) GetResponsedSurveysByUserID(userID int) ([]models.Survey, erro
 	}
 
 	if len(responses) == 0 {
-		surveys := make([]models.Survey, 0)
+		surveys := make([]RespondedSurveys, 0)
 		return surveys, nil
 	}
 
-	surveyList := make([]models.Survey, len(responses)-1)
+	respondedSurveyList := make([]RespondedSurveys, len(responses)-1)
 	for _, response := range responses {
 
 		var survey models.Survey
@@ -109,10 +109,16 @@ func (s *service) GetResponsedSurveysByUserID(userID int) ([]models.Survey, erro
 		if errSurvey != nil {
 			return nil, errSurvey
 		}
-		surveyList = append(surveyList, survey)
+		newResSur := RespondedSurveys{
+			SurveyID:    survey.ID,
+			ResponseID:  response.ID,
+			SurveyTitle: survey.Title,
+			Created:     response.Created,
+		}
+		respondedSurveyList = append(respondedSurveyList, newResSur)
 	}
 
-	return surveyList, nil
+	return respondedSurveyList, nil
 }
 
 // GetResponseAnswersByID godoc
