@@ -20,6 +20,16 @@ or
 go build -o build/survey-webapp-backend cmd/survey-webapp-backend/main.go
 ```
 
+### SMTP settings for sending an email with the survey responses
+This service is using SMTP to send an email with survey response data to the user.
+This feature is **disabled** by default. To **enable** this feature you should update [**email**](https://github.com/yerzhan-karatay/survey-webapp-backend/blob/main/config/config.yaml#L14) and [**password**](https://github.com/yerzhan-karatay/survey-webapp-backend/blob/main/config/config.yaml#L15) in [**config.yaml**](https://github.com/yerzhan-karatay/survey-webapp-backend/blob/main/config/config.yaml) file by changing with your account credentials. I use GMAIL SMTP settings. If you want to GMAIL SMTP server, then you should create *App passwords* in your Google Account -> Security page. [Here](https://support.google.com/accounts/answer/185833?hl=en) is the tutorial to create App Passwords. 
+1. Go to your Google Account and choose Security on the left panel.
+2. On the Signing in to Google tab, select App Passwords.
+3. At the bottom, choose Select app and choose the app you using and then Select device and choose the device you’re using and then Generate.
+
+Follow the instructions to enter the App Password. The App Password is the 16-character code in the yellow bar on your device.
+
+
 ### API documentation is accessible via Swagger after `make run` command on this link - [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
 **NOTE!** 
