@@ -1,7 +1,12 @@
 package response
 
 import (
+	"fmt"
+	"log"
+
+	configs "github.com/yerzhan-karatay/survey-webapp-backend/config"
 	"github.com/yerzhan-karatay/survey-webapp-backend/models"
+	"github.com/yerzhan-karatay/survey-webapp-backend/utils"
 )
 
 // Service is the interface of Response service
@@ -74,6 +79,29 @@ func (s *service) CreateResponse(userID int, surveyID int, responseAns []Reponse
 		if err != nil {
 			return err
 		}
+	}
+
+	// SEND EMAIL using SMTP
+	config := configs.Get()
+	if config.SMTP.Email != "CHANGE_TO_YOUR_EMAIL@gmail.com" {
+		// GET USER EMAIL
+		user := &models.User{}
+		s.ResponseRepository.GetUserByID(user, userID)
+		emails := []string{user.Email}
+
+		// GET QUESTION OPTION TEXT
+		quesOpt := []*QuestionOptionText{}
+		errQO := s.ResponseRepository.GetFullResponseByReponseID(&quesOpt, response.ID)
+		if errQO != nil {
+			log.Println("SMTP - sql query error -", errQO)
+		}
+		var emailMessage string
+		emailMessage = fmt.Sprintf("Survey name - %s\n\n", survey.Title)
+		for _, questionAndOption := range quesOpt {
+			log.Println("SMTP - RESPONSE -", questionAndOption.Question, questionAndOption.Option)
+			emailMessage = fmt.Sprintf("%s\nQuestion - %s\nOption - %s", emailMessage, questionAndOption.Question, questionAndOption.Option)
+		}
+		utils.SendEmailSMTP(emails, emailMessage)
 	}
 	return nil
 }

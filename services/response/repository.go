@@ -17,6 +17,8 @@ type Repository interface {
 	GetResponsesBySurveyID(*[]*models.Response, int) error
 	GetResponseAnswersByReponseID(*[]*models.ResponseAnswer, int) error
 	GetSurveyByID(survey *models.Survey, surveyID int) error
+	GetUserByID(user *models.User, userID int) error
+	GetFullResponseByReponseID(quesOpt *[]*QuestionOptionText, responseID int) error
 }
 
 type repository struct {
@@ -90,10 +92,26 @@ func (r *repository) GetResponseAnswersByReponseID(responseAns *[]*models.Respon
 	return nil
 }
 
+// GetFullResponseByReponseID get response answers by responseID
+func (r *repository) GetFullResponseByReponseID(quesOpt *[]*QuestionOptionText, responseID int) error {
+	if err := r.db.Table("response_answer").Select("option.title as option, question.title as question").Where("response_answer.response_id = ?", responseID).Joins("JOIN option on option.id = response_answer.option_id").Joins("JOIN question on question.id = response_answer.question_id").Find(quesOpt).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetSurveyByID get survey by id
 func (r *repository) GetSurveyByID(survey *models.Survey, surveyID int) error {
 	if err := r.db.Table("survey").Where("id = ?", surveyID).Find(survey).Error; err != nil {
 		return err
+	}
+	return nil
+}
+
+// GetUser get user record by id
+func (r *repository) GetUserByID(user *models.User, userID int) error {
+	if r.db.Table("user").Select("email").Where("id = ?", userID).First(&user).RecordNotFound() {
+		return ErrNotFound
 	}
 	return nil
 }

@@ -24,6 +24,12 @@ type Config struct {
 		Resource  string `yaml:"resource"`
 		SecretKey string `yaml:"secretKey"`
 	}
+	SMTP struct {
+		Server   string `yaml:"server"`
+		Email    string `yaml:"email"`
+		Password string `yaml:"password"`
+		Port     string `yaml:"port"`
+	}
 }
 
 var config *Config

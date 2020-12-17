@@ -121,6 +121,12 @@ type RespondedSurveys struct {
 	Created     time.Time `json:"created" example:"2020 Jun 3rd"`
 }
 
+// QuestionOptionText is the sql structure for SMTP method
+type QuestionOptionText struct {
+	Question string `json:"question" gorm:"column:question;type:varchar(255);not null" example:"This is question"`
+	Option   string `json:"option" gorm:"column:option;type:varchar(255);not null" example:"This is option"`
+}
+
 var (
 	// ErrAccessDenied means user don't have access to this question
 	ErrAccessDenied = errors.NewHTTPError(http.StatusForbidden, "Access to this Survey denied")

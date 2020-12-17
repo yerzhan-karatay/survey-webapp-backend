@@ -9,3 +9,8 @@ db:
 security:
   resource: "local"
   secretKey: "mysecret"
+smtp:
+  server: "smtp.gmail.com"
+  email: "CHANGE_TO_YOUR_EMAIL@gmail.com"
+  password: "YOUR_PASSWORD"
+  port: 587
