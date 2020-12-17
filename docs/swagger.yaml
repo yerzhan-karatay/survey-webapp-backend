@@ -839,14 +839,4 @@ securityDefinitions:
     in: header
     name: Authorization
     type: apiKey
-  BasicAuth:
-    type: basic
-  OAuth2Application:
-    authorizationUrl: ""
-    flow: application
-    scopes:
-      admin: ' Grants read and write access to administrative information'
-      write: ' Grants write access'
-    tokenUrl: http://localhost:8080/login
-    type: oauth2
 swagger: "2.0"

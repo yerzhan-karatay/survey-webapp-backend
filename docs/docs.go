@@ -1314,19 +1314,6 @@ var doc = `{
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
-        },
-        "BasicAuth": {
-            "type": "basic"
-        },
-        "OAuth2Application": {
-            "type": "oauth2",
-            "flow": "application",
-            "authorizationUrl": "",
-            "tokenUrl": "http://localhost:8080/login",
-            "scopes": {
-                "admin": " Grants read and write access to administrative information",
-                "write": " Grants write access"
-            }
         }
     }
 }`

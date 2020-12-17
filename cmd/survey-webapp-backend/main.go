@@ -31,13 +31,10 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @securityDefinitions.basic BasicAuth
-
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
 
-// @securitydefinitions.oauth2.application OAuth2Application
 // @tokenUrl http://localhost:8080/login
 // @scope.write Grants write access
 // @scope.admin Grants read and write access to administrative information
